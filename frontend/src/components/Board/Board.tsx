@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { BoardCell, Position } from '../../../../../shared/contracts/types';
+import './Board.css';
 
 interface BoardProps {
   board: BoardCell[][];
@@ -22,13 +23,16 @@ export const Board: React.FC<BoardProps> = ({
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [hoverPos, setHoverPos] = useState<Position | null>(null);
+
+  // Constants for rendering
   const cellSize = 30;
-  const margin = 30;
+  const margin = 30; // Margin for coordinates
+  const padding = 20; // Padding inside the board grid
   const canvasSize = boardSize * cellSize + margin * 2;
 
   useEffect(() => {
     drawBoard();
-  }, [board, lastMove, hoverPos]);
+  }, [board, lastMove, hoverPos, boardSize]);
 
   const drawBoard = () => {
     const canvas = canvasRef.current;
@@ -37,45 +41,42 @@ export const Board: React.FC<BoardProps> = ({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // 清空畫布
+    // Clear canvas (transparent because background is handled by CSS)
     ctx.clearRect(0, 0, canvasSize, canvasSize);
 
-    // 繪製背景
-    ctx.fillStyle = '#dcb35c';
-    ctx.fillRect(0, 0, canvasSize, canvasSize);
+    // Draw coordinates
+    drawCoordinates(ctx);
 
-    // 繪製網格線
+    // Draw grid lines
     ctx.strokeStyle = '#000';
     ctx.lineWidth = 1;
+    ctx.beginPath();
 
     for (let i = 0; i < boardSize; i++) {
-      const pos = margin + i * cellSize;
-      
-      // 橫線
-      ctx.beginPath();
-      ctx.moveTo(margin, pos);
-      ctx.lineTo(canvasSize - margin, pos);
-      ctx.stroke();
+      const pos = margin + i * cellSize + cellSize / 2;
 
-      // 豎線
-      ctx.beginPath();
-      ctx.moveTo(pos, margin);
-      ctx.lineTo(pos, canvasSize - margin);
-      ctx.stroke();
+      // Horizontal lines
+      ctx.moveTo(margin + cellSize / 2, pos);
+      ctx.lineTo(canvasSize - margin - cellSize / 2, pos);
+
+      // Vertical lines
+      ctx.moveTo(pos, margin + cellSize / 2);
+      ctx.lineTo(pos, canvasSize - margin - cellSize / 2);
     }
+    ctx.stroke();
 
-    // 繪製星位
+    // Draw star points
     const starPoints = getStarPoints(boardSize);
     starPoints.forEach(point => {
-      const x = margin + point.x * cellSize;
-      const y = margin + point.y * cellSize;
+      const x = margin + point.x * cellSize + cellSize / 2;
+      const y = margin + point.y * cellSize + cellSize / 2;
       ctx.beginPath();
-      ctx.arc(x, y, 4, 0, 2 * Math.PI);
+      ctx.arc(x, y, 3, 0, 2 * Math.PI);
       ctx.fillStyle = '#000';
       ctx.fill();
     });
 
-    // 繪製棋子
+    // Draw stones
     for (let y = 0; y < boardSize; y++) {
       for (let x = 0; x < boardSize; x++) {
         const cell = board[y][x];
@@ -85,14 +86,37 @@ export const Board: React.FC<BoardProps> = ({
       }
     }
 
-    // 標記最後一手
+    // Draw last move marker
     if (lastMove) {
       drawLastMoveMarker(ctx, lastMove.x, lastMove.y);
     }
 
-    // 繪製懸停預覽
-    if (hoverPos && !disabled) {
+    // Draw hover preview
+    if (hoverPos && !disabled && board[hoverPos.y][hoverPos.x] === 0) {
       drawStone(ctx, hoverPos.x, hoverPos.y, 'black', true);
+    }
+  };
+
+  const drawCoordinates = (ctx: CanvasRenderingContext2D) => {
+    ctx.fillStyle = '#000';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    const letters = 'ABCDEFGHJKLMNOPQRST'.split('');
+
+    for (let i = 0; i < boardSize; i++) {
+      const pos = margin + i * cellSize + cellSize / 2;
+
+      // Top letters
+      ctx.fillText(letters[i], pos, margin / 2);
+      // Bottom letters
+      ctx.fillText(letters[i], pos, canvasSize - margin / 2);
+
+      // Left numbers
+      ctx.fillText((boardSize - i).toString(), margin / 2, pos);
+      // Right numbers
+      ctx.fillText((boardSize - i).toString(), canvasSize - margin / 2, pos);
     }
   };
 
@@ -103,36 +127,57 @@ export const Board: React.FC<BoardProps> = ({
     color: 'black' | 'white',
     isPreview: boolean
   ) => {
-    const posX = margin + x * cellSize;
-    const posY = margin + y * cellSize;
-    const radius = cellSize / 2 - 2;
+    const posX = margin + x * cellSize + cellSize / 2;
+    const posY = margin + y * cellSize + cellSize / 2;
+    const radius = cellSize / 2 - 1.5;
+
+    ctx.save();
+
+    if (isPreview) {
+      ctx.globalAlpha = 0.5;
+    } else {
+      // Shadow for placed stones
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
+      ctx.shadowBlur = 4;
+      ctx.shadowOffsetX = 2;
+      ctx.shadowOffsetY = 2;
+    }
 
     ctx.beginPath();
     ctx.arc(posX, posY, radius, 0, 2 * Math.PI);
-    
-    if (isPreview) {
-      ctx.globalAlpha = 0.5;
+
+    // Gradient for 3D effect
+    const gradient = ctx.createRadialGradient(
+      posX - radius / 3,
+      posY - radius / 3,
+      radius / 10,
+      posX,
+      posY,
+      radius
+    );
+
+    if (color === 'black') {
+      gradient.addColorStop(0, '#444');
+      gradient.addColorStop(1, '#000');
+    } else {
+      gradient.addColorStop(0, '#fff');
+      gradient.addColorStop(1, '#ddd');
     }
 
-    ctx.fillStyle = color === 'black' ? '#000' : '#fff';
+    ctx.fillStyle = gradient;
     ctx.fill();
 
-    if (color === 'white') {
-      ctx.strokeStyle = '#000';
-      ctx.lineWidth = 1;
-      ctx.stroke();
-    }
-
-    ctx.globalAlpha = 1.0;
+    // Restore context to remove shadow for other elements
+    ctx.restore();
   };
 
   const drawLastMoveMarker = (ctx: CanvasRenderingContext2D, x: number, y: number) => {
-    const posX = margin + x * cellSize;
-    const posY = margin + y * cellSize;
+    const posX = margin + x * cellSize + cellSize / 2;
+    const posY = margin + y * cellSize + cellSize / 2;
 
     ctx.beginPath();
-    ctx.arc(posX, posY, 5, 0, 2 * Math.PI);
-    ctx.strokeStyle = '#f00';
+    ctx.arc(posX, posY, 4, 0, 2 * Math.PI);
+    ctx.strokeStyle = '#ef4444'; // Red marker
     ctx.lineWidth = 2;
     ctx.stroke();
   };
@@ -165,8 +210,8 @@ export const Board: React.FC<BoardProps> = ({
     const clickX = event.clientX - rect.left;
     const clickY = event.clientY - rect.top;
 
-    const x = Math.round((clickX - margin) / cellSize);
-    const y = Math.round((clickY - margin) / cellSize);
+    const x = Math.round((clickX - margin - cellSize / 2) / cellSize);
+    const y = Math.round((clickY - margin - cellSize / 2) / cellSize);
 
     if (x >= 0 && x < boardSize && y >= 0 && y < boardSize) {
       onStonePlace({ x, y });
@@ -183,8 +228,8 @@ export const Board: React.FC<BoardProps> = ({
     const mouseX = event.clientX - rect.left;
     const mouseY = event.clientY - rect.top;
 
-    const x = Math.round((mouseX - margin) / cellSize);
-    const y = Math.round((mouseY - margin) / cellSize);
+    const x = Math.round((mouseX - margin - cellSize / 2) / cellSize);
+    const y = Math.round((mouseY - margin - cellSize / 2) / cellSize);
 
     if (x >= 0 && x < boardSize && y >= 0 && y < boardSize) {
       setHoverPos({ x, y });
@@ -198,7 +243,7 @@ export const Board: React.FC<BoardProps> = ({
   };
 
   return (
-    <div style={{ display: 'inline-block', padding: '20px' }}>
+    <div className="board-container">
       <canvas
         ref={canvasRef}
         width={canvasSize}
@@ -206,10 +251,7 @@ export const Board: React.FC<BoardProps> = ({
         onClick={handleCanvasClick}
         onMouseMove={handleCanvasMouseMove}
         onMouseLeave={handleCanvasMouseLeave}
-        style={{
-          cursor: disabled ? 'not-allowed' : 'pointer',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-        }}
+        className={`board-canvas ${disabled ? 'disabled' : ''}`}
       />
     </div>
   );

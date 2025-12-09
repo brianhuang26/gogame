@@ -1,4 +1,4 @@
-import { BoardCell, Position, StoneColor, Group, BoardSize } from '../../../shared/contracts/types';
+import { BoardCell, Position, StoneColor, Group, BoardSize } from '../../../../shared/contracts/types';
 
 /**
  * Board Analyzer for group detection and liberty calculation
@@ -66,7 +66,7 @@ export class BoardAnalyzer {
         const key = this.positionKey({ x, y });
         if (board[y][x] === cellValue && !visited.has(key)) {
           const group = this.findGroup(board, { x, y });
-          group.stones.forEach(stone => visited.add(this.positionKey(stone)));
+          group.stones.forEach((stone: Position) => visited.add(this.positionKey(stone)));
           
           if (group.libertyCount === 0) {
             deadGroups.push(group);

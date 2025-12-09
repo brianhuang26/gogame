@@ -20,11 +20,21 @@ export class SocketManager {
   }
 
   private initialize(): void {
-    // Socket authentication middleware
+    // Socket authentication middleware (optional in development)
     this.io.use((socket, next) => {
       try {
         const token = socket.handshake.auth.token;
+
         if (!token) {
+          // In development, allow connection with mock user
+          if (process.env.NODE_ENV === 'development') {
+            socket.data.user = {
+              playerId: 'dev-player-1',
+              username: 'DevPlayer'
+            };
+            logger.debug('Socket connected with mock user in development mode');
+            return next();
+          }
           return next(new Error('未提供認證令牌'));
         }
 
@@ -37,6 +47,15 @@ export class SocketManager {
         socket.data.user = decoded;
         next();
       } catch (error) {
+        // In development, fall back to mock user
+        if (process.env.NODE_ENV === 'development') {
+          socket.data.user = {
+            playerId: 'dev-player-1',
+            username: 'DevPlayer'
+          };
+          logger.debug('Socket JWT verification failed, using mock user in development mode');
+          return next();
+        }
         next(new Error('無效的認證令牌'));
       }
     });
@@ -99,10 +118,10 @@ export class SocketManager {
     /**
      * 落子
      */
-    socket.on('game:move', async (data: { 
-      gameId: string; 
-      position: Position; 
-      color: StoneColor 
+    socket.on('game:move', async (data: {
+      gameId: string;
+      position: Position;
+      color: StoneColor
     }) => {
       try {
         const { gameId, position, color } = data;
@@ -134,6 +153,62 @@ export class SocketManager {
         socket.emit('game:move:error', {
           code: 'MOVE_ERROR',
           message: error instanceof Error ? error.message : '落子失敗'
+        });
+      }
+    });
+
+    /**
+     * 虛手 (Pass)
+     */
+    socket.on('game:pass', async (data: {
+      gameId: string;
+      color: StoneColor
+    }) => {
+      try {
+        const { gameId, color } = data;
+        const game = await this.gameRepository.findByGameId(gameId);
+
+        if (!game) {
+          socket.emit('game:error', {
+            code: 'GAME_NOT_FOUND',
+            message: '找不到對局'
+          });
+          return;
+        }
+
+        const gameEngine = new GameEngine(game.boardSize);
+        await gameEngine.initializeFromGame(gameId);
+
+        const result = await gameEngine.pass(gameId, color);
+
+        // 廣播給房間內所有人
+        this.io.to(`game:${gameId}`).emit('game:move', {
+          move: result.move,
+          gameState: result.gameState,
+          captured: []
+        });
+
+        // 如果對局結束，發送 game:ended
+        if (result.gameState.status === 'completed' && result.gameState.score) {
+          const score = result.gameState.score;
+          const winner = score.black > score.white ? 'black' : (score.white > score.black ? 'white' : 'draw');
+
+          this.io.to(`game:${gameId}`).emit('game:ended', {
+            result: {
+              winner,
+              method: 'score',
+              score,
+              timestamp: new Date()
+            }
+          });
+        }
+
+        logger.info(`虛手: ${gameId}, ${color}`);
+      } catch (error) {
+        logger.error('虛手失敗', error);
+        socket.emit('game:move:error', {
+          code: 'PASS_ERROR',
+          message: error instanceof Error ? error.message : '虛手失敗'
         });
       }
     });

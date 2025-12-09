@@ -1,20 +1,22 @@
-import { 
-  BoardCell, 
-  Position, 
-  StoneColor, 
+import {
+  BoardCell,
+  Position,
+  StoneColor,
   MoveResult,
   Move,
-  BoardSize
+  BoardSize,
+  GameState
 } from '../../../../shared/contracts/types';
 import { ZobristHash } from './ZobristHash';
 import { SuperKoChecker } from './SuperKoChecker';
 import { BoardAnalyzer } from './BoardAnalyzer';
+import { ScoringService } from './ScoringService';
 import { GameRepository } from '../../db/repositories/GameRepository';
-import { 
-  validatePosition, 
-  validateStoneColor, 
-  GameLogicError, 
-  ErrorMessages 
+import {
+  validatePosition,
+  validateStoneColor,
+  GameLogicError,
+  ErrorMessages
 } from '../../utils/validation';
 import { logger } from '../../utils/logger';
 
@@ -91,7 +93,7 @@ export class GameEngine {
     // 更新棋盤狀態
     const moveNumber = game.state.moveNumber + 1;
     const now = new Date();
-    const thinkTime = game.state.lastMove 
+    const thinkTime = game.state.lastMove
       ? (now.getTime() - new Date(game.moves[game.moves.length - 1]?.timestamp || now).getTime()) / 1000
       : 0;
 
@@ -116,7 +118,7 @@ export class GameEngine {
     }
 
     // 更新狀態
-    const newState = {
+    const newState: GameState = {
       currentBoard: newBoard,
       currentTurn: opponentColor,
       moveNumber,
@@ -124,7 +126,9 @@ export class GameEngine {
       boardHistory: [...game.state.boardHistory, newHash],
       currentHash: newHash,
       koPoint: captured.length === 1 ? captured[0] : null,
-      lastMove: position
+      lastMove: position,
+      consecutivePasses: 0,
+      status: 'in_progress'
     };
 
     // 儲存到資料庫
@@ -140,6 +144,87 @@ export class GameEngine {
       move,
       gameState: newState,
       captured
+    };
+  }
+
+  /**
+   * 虛手（Pass）
+   */
+  async pass(gameId: string, color: StoneColor): Promise<MoveResult> {
+    const game = await this.gameRepository.findByGameId(gameId);
+    if (!game) {
+      throw new GameLogicError(ErrorMessages.GAME_NOT_FOUND);
+    }
+
+    if (game.status !== 'in_progress') {
+      throw new GameLogicError(ErrorMessages.GAME_ENDED);
+    }
+
+    if (game.state.currentTurn !== color) {
+      throw new GameLogicError(ErrorMessages.INVALID_TURN);
+    }
+
+    const moveNumber = game.state.moveNumber + 1;
+    const now = new Date();
+    const thinkTime = game.state.lastMove
+      ? (now.getTime() - new Date(game.moves[game.moves.length - 1]?.timestamp || now).getTime()) / 1000
+      : 0;
+
+    const move: Move = {
+      moveNumber,
+      color,
+      position: { x: -1, y: -1 }, // Pass position
+      timestamp: now,
+      thinkTime,
+      captured: [],
+      capturedCount: 0,
+      boardHashAfter: game.state.currentHash,
+      isPass: true
+    };
+
+    const consecutivePasses = (game.state.consecutivePasses || 0) + 1;
+    let status = game.state.status;
+    let score;
+
+    logger.info(`Pass called. Previous consecutivePasses: ${game.state.consecutivePasses}, New: ${consecutivePasses}`);
+
+    // Check for game end (2 consecutive passes)
+    if (consecutivePasses >= 2) {
+      status = 'completed';
+      score = ScoringService.calculateScore(
+        game.state.currentBoard,
+        game.state.capturedStones,
+        game.komi
+      );
+
+      // Update result
+      const winner = score.black > score.white ? 'black' : (score.white > score.black ? 'white' : 'draw');
+      await this.gameRepository.updateGameResult(gameId, {
+        winner,
+        method: 'score',
+        score,
+        timestamp: now
+      });
+    }
+
+    const newState: GameState = {
+      ...game.state,
+      currentTurn: color === 'black' ? 'white' : 'black',
+      moveNumber,
+      consecutivePasses,
+      status,
+      score
+    };
+
+    await this.gameRepository.updateGameState(gameId, newState);
+    await this.gameRepository.addMove(gameId, move);
+
+    logger.info(`虛手成功: ${gameId}, 手數: ${moveNumber}, 連續 Pass: ${consecutivePasses}`);
+
+    return {
+      move,
+      gameState: newState,
+      captured: []
     };
   }
 

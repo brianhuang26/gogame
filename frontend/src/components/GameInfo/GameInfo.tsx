@@ -1,5 +1,7 @@
 import React from 'react';
 import { GameState } from '../../../../../shared/contracts/types';
+import { CapturedStones } from './CapturedStones';
+import './GameInfo.css';
 
 interface GameInfoProps {
   gameState: GameState;
@@ -19,39 +21,41 @@ export const GameInfo: React.FC<GameInfoProps> = ({
   const { currentTurn, moveNumber, capturedStones } = gameState;
 
   return (
-    <div style={{
-      padding: '20px',
-      backgroundColor: '#f5f5f5',
-      borderRadius: '8px',
-      minWidth: '250px'
-    }}>
-      <h3 style={{ marginTop: 0 }}>對局資訊</h3>
-      
-      <div style={{ marginBottom: '15px' }}>
-        <strong>當前回合:</strong>{' '}
-        <span style={{ color: currentTurn === 'black' ? '#000' : '#666' }}>
-          {currentTurn === 'black' ? '黑棋' : '白棋'}
-        </span>
+    <div className="game-info">
+      <h3 className="info-header">對局資訊</h3>
+
+      <div className="turn-indicator">
+        <span className="turn-label">當前回合</span>
+        <div className="current-player">
+          <div className={`player-dot ${currentTurn === 'black' ? 'dot-black' : 'dot-white'}`} />
+          <span>{currentTurn === 'black' ? '黑棋' : '白棋'}</span>
+        </div>
       </div>
 
-      <div style={{ marginBottom: '15px' }}>
-        <strong>手數:</strong> {moveNumber}
+      <div className="move-counter">
+        手數: {moveNumber}
       </div>
 
-      <div style={{ marginBottom: '15px' }}>
-        <strong>黑棋:</strong> {blackPlayerName}
-        <br />
-        <span style={{ fontSize: '0.9em', color: '#666' }}>
-          提子: {capturedStones.black}
-        </span>
-      </div>
+      <div className="players-container">
+        <div className={`player-card ${currentTurn === 'black' ? 'active' : ''}`}>
+          <div className="player-name">
+            <div className="player-dot dot-black" />
+            {blackPlayerName}
+          </div>
+          <div className="captured-area">
+            <CapturedStones count={capturedStones.black} color="white" />
+          </div>
+        </div>
 
-      <div style={{ marginBottom: '15px' }}>
-        <strong>白棋:</strong> {whitePlayerName}
-        <br />
-        <span style={{ fontSize: '0.9em', color: '#666' }}>
-          提子: {capturedStones.white}
-        </span>
+        <div className={`player-card ${currentTurn === 'white' ? 'active' : ''}`}>
+          <div className="player-name">
+            <div className="player-dot dot-white" />
+            {whitePlayerName}
+          </div>
+          <div className="captured-area">
+            <CapturedStones count={capturedStones.white} color="black" />
+          </div>
+        </div>
       </div>
     </div>
   );

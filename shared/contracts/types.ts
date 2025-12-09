@@ -39,7 +39,7 @@ export type GameRules = 'chinese';
 /**
  * 對局狀態
  */
-export type GameStatus = 
+export type GameStatus =
   | 'waiting'       // 等待玩家加入
   | 'in_progress'   // 進行中
   | 'completed'     // 已結束
@@ -73,6 +73,16 @@ export interface GameState {
   currentHash: string;
   koPoint: Position | null;  // 禁入點（打劫位置）
   lastMove: Position | null;
+  consecutivePasses: number; // 連續 Pass 次數
+  status: GameStatus; // 對局狀態
+  score?: {
+    black: number;
+    white: number;
+    blackTerritory: number;
+    whiteTerritory: number;
+    blackCaptured: number;
+    whiteCaptured: number;
+  };
 }
 
 /**
@@ -182,7 +192,7 @@ export interface CanadianConfig {
 
 // ========== 防作弊 ==========
 
-export type CheatFlagType = 
+export type CheatFlagType =
   | 'FAST_MOVES'
   | 'AI_PATTERN'
   | 'MULTI_DEVICE'

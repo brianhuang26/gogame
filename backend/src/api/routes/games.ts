@@ -1,18 +1,19 @@
-import { Router, Request, Response } from 'express';
-import { authMiddleware, AuthRequest } from '../middleware/auth';
+import { Router, Response } from 'express';
+import { AuthRequest } from '../middleware/auth';
+import { optionalAuthMiddleware } from '../middleware/optionalAuth';
 import { GameRepository } from '../../db/repositories/GameRepository';
 import { GameEngine } from '../../services/game/GameEngine';
-import { validatePosition, validateBoardSize, validateKomi } from '../../utils/validation';
+import { validateBoardSize, validateKomi } from '../../utils/validation';
 import { BoardSize, Position, StoneColor } from '../../../../shared/contracts/types';
 
 const router = Router();
-const gameRepository = new GameRepository();
 
 /**
  * POST /api/v1/games - 建立新對局
  */
-router.post('/', authMiddleware, async (req: AuthRequest, res: Response) => {
+router.post('/', optionalAuthMiddleware, async (req: AuthRequest, res: Response) => {
   try {
+    const gameRepository = new GameRepository();
     const { boardSize, opponentId, komi } = req.body;
 
     validateBoardSize(boardSize);
@@ -50,8 +51,9 @@ router.post('/', authMiddleware, async (req: AuthRequest, res: Response) => {
 /**
  * GET /api/v1/games/:id - 取得對局資訊
  */
-router.get('/:id', authMiddleware, async (req: AuthRequest, res: Response) => {
+router.get('/:id', optionalAuthMiddleware, async (req: AuthRequest, res: Response) => {
   try {
+    const gameRepository = new GameRepository();
     const { id } = req.params;
     const game = await gameRepository.findByGameId(id);
 
@@ -84,8 +86,9 @@ router.get('/:id', authMiddleware, async (req: AuthRequest, res: Response) => {
 /**
  * POST /api/v1/games/:id/moves - 落子
  */
-router.post('/:id/moves', authMiddleware, async (req: AuthRequest, res: Response) => {
+router.post('/:id/moves', optionalAuthMiddleware, async (req: AuthRequest, res: Response) => {
   try {
+    const gameRepository = new GameRepository();
     const { id } = req.params;
     const { position, color } = req.body as { position: Position; color: StoneColor };
 
@@ -122,10 +125,52 @@ router.post('/:id/moves', authMiddleware, async (req: AuthRequest, res: Response
 });
 
 /**
+ * POST /api/v1/games/:id/pass - 虛手
+ */
+router.post('/:id/pass', optionalAuthMiddleware, async (req: AuthRequest, res: Response) => {
+  try {
+    const gameRepository = new GameRepository();
+    const { id } = req.params;
+    const { color } = req.body as { color: StoneColor };
+
+    const game = await gameRepository.findByGameId(id);
+    if (!game) {
+      res.status(404).json({
+        success: false,
+        error: {
+          code: 'GAME_NOT_FOUND',
+          message: '找不到對局'
+        }
+      });
+      return;
+    }
+
+    const gameEngine = new GameEngine(game.boardSize);
+    await gameEngine.initializeFromGame(id);
+
+    const result = await gameEngine.pass(id, color);
+
+    res.json({
+      success: true,
+      data: result
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      error: {
+        code: 'PASS_ERROR',
+        message: error instanceof Error ? error.message : '虛手失敗'
+      }
+    });
+  }
+});
+
+/**
  * POST /api/v1/games/:id/end - 結束對局
  */
-router.post('/:id/end', authMiddleware, async (req: AuthRequest, res: Response) => {
+router.post('/:id/end', optionalAuthMiddleware, async (req: AuthRequest, res: Response) => {
   try {
+    const gameRepository = new GameRepository();
     const { id } = req.params;
     const { method, winner } = req.body;
 

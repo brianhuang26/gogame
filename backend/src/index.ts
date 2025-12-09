@@ -10,11 +10,11 @@ async function main() {
   try {
     const app = new App();
 
-    // Initialize Socket.IO
-    new SocketManager(app.io);
-
-    // Start server
+    // Start server and connect to database
     await app.start();
+
+    // Initialize Socket.IO after database connection
+    new SocketManager(app.io);
 
     // Graceful shutdown
     process.on('SIGTERM', async () => {

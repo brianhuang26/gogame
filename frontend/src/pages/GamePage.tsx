@@ -1,195 +1,118 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Board } from '../components/Board/Board';
 import { GameInfo } from '../components/GameInfo/GameInfo';
-import { socket } from '../services/socket';
-import { api } from '../services/api';
-import { GameState, Position, Move } from '../../../shared/contracts/types';
+import { ErrorDisplay } from '../components/common/ErrorDisplay';
+import { useGame } from '../hooks/useGame';
+import './GamePage.css';
 
 /**
  * GamePage - Main game interface
  * 對局頁面
  */
 export const GamePage: React.FC<{ gameId: string }> = ({ gameId }) => {
-  const [gameState, setGameState] = useState<GameState | null>(null);
-  const [players, setPlayers] = useState<any>(null);
-  const [moves, setMoves] = useState<Move[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const [isConnected, setIsConnected] = useState(false);
-
-  useEffect(() => {
-    // Initialize socket connection
-    const token = localStorage.getItem('token');
-    if (token) {
-      socket.connect(token);
-    }
-
-    // Load game data
-    loadGame();
-
-    // Socket event listeners
-    socket.on('game:joined', (data: any) => {
-      console.log('Joined game:', data);
-      setGameState(data.gameState);
-      setPlayers(data.players);
-      setMoves(data.moves);
-      setIsConnected(true);
-    });
-
-    socket.on('game:move', (data: any) => {
-      console.log('Move received:', data);
-      setGameState(data.gameState);
-      setMoves(prev => [...prev, data.move]);
-      setError(null);
-    });
-
-    socket.on('game:move:error', (data: any) => {
-      console.error('Move error:', data);
-      setError(data.message);
-    });
-
-    socket.on('game:ended', (data: any) => {
-      console.log('Game ended:', data);
-      alert(`對局結束! 勝者: ${data.result.winner === 'black' ? '黑棋' : '白棋'}`);
-    });
-
-    socket.on('game:error', (data: any) => {
-      console.error('Game error:', data);
-      setError(data.message);
-    });
-
-    return () => {
-      socket.off('game:joined');
-      socket.off('game:move');
-      socket.off('game:move:error');
-      socket.off('game:ended');
-      socket.off('game:error');
-    };
-  }, [gameId]);
-
-  const loadGame = async () => {
-    try {
-      const response = await api.getGame(gameId);
-      if (response.success) {
-        const game = response.data;
-        setGameState(game.state);
-        setPlayers(game.players);
-        setMoves(game.moves);
-
-        // Join game room
-        socket.joinGame(gameId);
-      }
-    } catch (err: any) {
-      setError(err.error?.message || '載入對局失敗');
-    }
-  };
-
-  const handleStonePlace = (position: Position) => {
-    if (!gameState || !players) return;
-
-    // Determine current player's color
-    const currentColor = gameState.currentTurn;
-    
-    // Emit move via socket
-    socket.makeMove(gameId, position, currentColor);
-  };
-
-  const handleResign = () => {
-    if (confirm('確定要投降嗎？')) {
-      socket.resign(gameId);
-    }
-  };
+  const {
+    gameState,
+    players,
+    moves,
+    error,
+    isConnected,
+    gameResult,
+    handleStonePlace,
+    handlePass,
+    handleResign,
+    clearError
+  } = useGame(gameId);
 
   if (!gameState || !players) {
-    return <div style={{ padding: '20px' }}>載入中...</div>;
+    return <div className="game-page">載入中...</div>;
   }
 
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      padding: '20px',
-      fontFamily: 'Arial, sans-serif'
-    }}>
-      <h1>圍棋對局</h1>
+    <div className="game-page">
+      <div className="game-header">
+        <h1 className="game-title">圍棋對局</h1>
+      </div>
 
-      {error && (
-        <div style={{
-          padding: '10px 20px',
-          backgroundColor: '#fee',
-          color: '#c00',
-          borderRadius: '4px',
-          marginBottom: '20px'
-        }}>
-          {error}
+      <ErrorDisplay message={error} onClose={clearError} />
+
+      {gameResult && (
+        <div className="game-result-modal">
+          <div className="result-content">
+            <h2>對局結束</h2>
+            <p>
+              勝者: {gameResult.winner === 'black' ? '黑棋' : (gameResult.winner === 'white' ? '白棋' : '和局')}
+            </p>
+            <p>結束方式: {gameResult.method === 'score' ? '數子' : '投降'}</p>
+            {gameResult.score && (
+              <div className="score-details">
+                <p>黑棋: {gameResult.score.black} 目</p>
+                <p>白棋: {gameResult.score.white} 目</p>
+              </div>
+            )}
+            <button onClick={() => window.location.href = '/'}>返回首頁</button>
+          </div>
         </div>
       )}
 
-      <div style={{
-        display: 'flex',
-        gap: '20px',
-        alignItems: 'flex-start'
-      }}>
+      <div className="game-content">
         <Board
           board={gameState.currentBoard}
           boardSize={gameState.currentBoard.length}
           lastMove={gameState.lastMove}
           onStonePlace={handleStonePlace}
-          disabled={!isConnected}
+          disabled={!isConnected || !!gameResult}
         />
 
-        <div>
+        <div className="game-sidebar">
           <GameInfo
             gameState={gameState}
             blackPlayerName={players.black.name}
             whitePlayerName={players.white.name}
           />
 
-          <button
-            onClick={handleResign}
-            style={{
-              marginTop: '20px',
-              padding: '10px 20px',
-              backgroundColor: '#d32f2f',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              width: '100%'
-            }}
-          >
-            投降
-          </button>
+          <div className="action-buttons">
+            <button
+              onClick={handlePass}
+              className="pass-button"
+              disabled={!!gameResult}
+            >
+              虛手 (Pass)
+            </button>
+            <button
+              onClick={handleResign}
+              className="resign-button"
+              disabled={!!gameResult}
+            >
+              投降
+            </button>
+          </div>
 
-          <div style={{
-            marginTop: '10px',
-            fontSize: '0.9em',
-            color: isConnected ? '#4caf50' : '#f44336'
-          }}>
-            {isConnected ? '● 已連線' : '● 未連線'}
+          <div className={`connection-status ${isConnected ? 'status-connected' : 'status-disconnected'}`}>
+            <span className="status-dot" />
+            {isConnected ? '已連線' : '未連線'}
           </div>
         </div>
       </div>
 
-      <div style={{
-        marginTop: '30px',
-        padding: '20px',
-        backgroundColor: '#f5f5f5',
-        borderRadius: '8px',
-        maxWidth: '800px',
-        width: '100%'
-      }}>
-        <h3>著手記錄</h3>
-        <div style={{
-          maxHeight: '200px',
-          overflowY: 'auto'
-        }}>
+      <div className="move-history">
+        <h3 className="history-title">著手記錄</h3>
+        <div className="history-list">
           {moves.map((move, index) => (
-            <div key={index} style={{ padding: '5px 0', borderBottom: '1px solid #ddd' }}>
-              <strong>第 {move.moveNumber} 手:</strong>{' '}
-              {move.color === 'black' ? '黑棋' : '白棋'}{' '}
-              ({move.position.x}, {move.position.y})
-              {move.capturedCount > 0 && ` - 提子 ${move.capturedCount}`}
+            <div key={index} className="history-item">
+              <div>
+                <span className="history-move-number">第 {move.moveNumber} 手</span>
+                <span className={`history-player ${move.color === 'black' ? 'player-black' : 'player-white'}`}>
+                  {move.color === 'black' ? '黑棋' : '白棋'}
+                </span>
+                <span className="history-coords">
+                  {move.isPass ? '虛手' : `(${move.position.x}, ${move.position.y})`}
+                </span>
+              </div>
+              {move.capturedCount > 0 && (
+                <span className="history-capture">
+                  提子 {move.capturedCount}
+                </span>
+              )}
             </div>
           ))}
         </div>

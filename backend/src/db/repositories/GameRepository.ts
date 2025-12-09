@@ -2,12 +2,10 @@ import { Collection } from 'mongodb';
 import { v4 as uuidv4 } from 'uuid';
 import { dbConnection } from '../connection';
 import { Game } from '../../models/Game';
-import { 
-  BoardSize, 
-  GameRules, 
-  StoneColor, 
+import {
+  BoardSize,
   BoardCell,
-  GameState 
+  GameState
 } from '../../../../shared/contracts/types';
 import { logger } from '../../utils/logger';
 
@@ -55,7 +53,9 @@ export class GameRepository {
       boardHistory: [],
       currentHash: '0',
       koPoint: null,
-      lastMove: null
+      lastMove: null,
+      consecutivePasses: 0,
+      status: 'in_progress'
     };
 
     const game: Game = {
@@ -103,11 +103,11 @@ export class GameRepository {
   async updateGameState(gameId: string, state: GameState): Promise<void> {
     await this.collection.updateOne(
       { gameId },
-      { 
-        $set: { 
+      {
+        $set: {
           state,
           updatedAt: new Date()
-        } 
+        }
       }
     );
   }
@@ -118,7 +118,7 @@ export class GameRepository {
   async addMove(gameId: string, move: any): Promise<void> {
     await this.collection.updateOne(
       { gameId },
-      { 
+      {
         $push: { moves: move },
         $set: { updatedAt: new Date() }
       }
@@ -131,14 +131,21 @@ export class GameRepository {
   async endGame(gameId: string, result: any): Promise<void> {
     await this.collection.updateOne(
       { gameId },
-      { 
-        $set: { 
+      {
+        $set: {
           status: 'completed',
           result,
           updatedAt: new Date()
-        } 
+        }
       }
     );
+  }
+
+  /**
+   * 更新對局結果（別名 endGame，為了相容性）
+   */
+  async updateGameResult(gameId: string, result: any): Promise<void> {
+    return this.endGame(gameId, result);
   }
 
   /**

@@ -31,7 +31,6 @@ class App {
     });
 
     this.initializeMiddleware();
-    this.initializeRoutes();
     this.initializeErrorHandling();
   }
 
@@ -50,15 +49,15 @@ class App {
     this.app.use(rateLimitMiddleware);
 
     // Logging
-    this.app.use((req, res, next) => {
+    this.app.use((req, _res, next) => {
       logger.info(`${req.method} ${req.path}`);
       next();
     });
   }
 
-  private initializeRoutes(): void {
+  public initializeRoutes(): void {
     // Health check
-    this.app.get('/health', (req, res) => {
+    this.app.get('/health', (_req, res) => {
       res.json({ status: 'ok', timestamp: new Date().toISOString() });
     });
 
@@ -75,6 +74,9 @@ class App {
     try {
       // Connect to database
       await dbConnection.connect();
+
+      // Initialize routes after database connection
+      this.initializeRoutes();
 
       const port = process.env.PORT || 3000;
       this.httpServer.listen(port, () => {

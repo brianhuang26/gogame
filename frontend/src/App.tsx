@@ -13,8 +13,18 @@ function App() {
   const handleStartGame = () => {
     if (gameId.trim()) {
       setIsInGame(true);
+      // Update URL without reloading
+      window.history.pushState({}, '', `/${gameId}`);
     }
   };
+
+  React.useEffect(() => {
+    const path = window.location.pathname.slice(1);
+    if (path && path.length > 5) {
+      setGameId(path);
+      setIsInGame(true);
+    }
+  }, []);
 
   if (isInGame && gameId) {
     return <GamePage gameId={gameId} />;

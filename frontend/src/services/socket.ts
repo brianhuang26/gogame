@@ -7,7 +7,7 @@ import { io, Socket } from 'socket.io-client';
 class SocketService {
   private socket: Socket | null = null;
 
-  connect(token: string): void {
+  connect(token?: string): void {
     const url = import.meta.env.VITE_SOCKET_URL || 'http://localhost:3000';
 
     this.socket = io(url, {
@@ -43,6 +43,10 @@ class SocketService {
 
   makeMove(gameId: string, position: { x: number; y: number }, color: string): void {
     this.socket?.emit('game:move', { gameId, position, color });
+  }
+
+  pass(gameId: string, color: string): void {
+    this.socket?.emit('game:pass', { gameId, color });
   }
 
   resign(gameId: string): void {

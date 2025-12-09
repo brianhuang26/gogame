@@ -1,0 +1,256 @@
+.game-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: #f0f2f5;
+  min-height: 100vh;
+  color: #333;
+}
+
+.game-header {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.game-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.game-content {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.game-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 300px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.resign-button,
+.pass-button {
+  padding: 12px 24px;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  flex: 1;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background-color 0.2s, transform 0.1s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.resign-button {
+  background-color: #ef4444;
+}
+
+.resign-button:hover {
+  background-color: #dc2626;
+}
+
+.pass-button {
+  background-color: #3b82f6;
+}
+
+.pass-button:hover {
+  background-color: #2563eb;
+}
+
+.resign-button:active,
+.pass-button:active {
+  transform: translateY(1px);
+}
+
+.resign-button:disabled,
+.pass-button:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.connection-status {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-connected {
+  color: #10b981;
+}
+
+.status-connected .status-dot {
+  background-color: #10b981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+
+.status-disconnected {
+  color: #ef4444;
+}
+
+.status-disconnected .status-dot {
+  background-color: #ef4444;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+}
+
+.move-history {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 12px;
+  max-width: 800px;
+  width: 100%;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.history-title {
+  margin: 0 0 15px 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #374151;
+  border-bottom: 2px solid #f3f4f6;
+  padding-bottom: 10px;
+}
+
+.history-list {
+  max-height: 200px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.history-item {
+  padding: 8px 12px;
+  border-radius: 6px;
+  background-color: #f9fafb;
+  font-size: 0.95rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.history-item:hover {
+  background-color: #f3f4f6;
+}
+
+.history-move-number {
+  font-weight: 600;
+  color: #6b7280;
+  margin-right: 10px;
+  min-width: 60px;
+}
+
+.history-player {
+  font-weight: 500;
+}
+
+.player-black {
+  color: #000;
+}
+
+.player-white {
+  color: #666;
+}
+
+.history-coords {
+  font-family: monospace;
+  background-color: #e5e7eb;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 8px;
+}
+
+.history-capture {
+  color: #dc2626;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-left: auto;
+}
+
+/* Modal Styles */
+.game-result-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.result-content {
+  background-color: white;
+  padding: 40px;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  max-width: 400px;
+  width: 90%;
+}
+
+.result-content h2 {
+  margin-top: 0;
+  color: #1f2937;
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+.result-content p {
+  font-size: 1.1rem;
+  margin: 10px 0;
+  color: #4b5563;
+}
+
+.score-details {
+  background-color: #f3f4f6;
+  padding: 15px;
+  border-radius: 8px;
+  margin: 20px 0;
+}
+
+.result-content button {
+  margin-top: 20px;
+  padding: 12px 30px;
+  background-color: #10b981;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.result-content button:hover {
+  background-color: #059669;
+}

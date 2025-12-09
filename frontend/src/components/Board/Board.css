@@ -1,0 +1,25 @@
+.board-container {
+    display: inline-block;
+    padding: 20px;
+    background-color: #eab354;
+    /* Fallback color */
+    background: radial-gradient(circle at center, #f0c36d 0%, #dcb35c 100%);
+    border-radius: 4px;
+    box-shadow:
+        0 10px 15px -3px rgba(0, 0, 0, 0.1),
+        0 4px 6px -2px rgba(0, 0, 0, 0.05),
+        inset 0 0 20px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.board-canvas {
+    cursor: pointer;
+    border-radius: 2px;
+    /* Ensure crisp rendering on high DPI displays */
+    image-rendering: pixelated;
+}
+
+.board-canvas.disabled {
+    cursor: not-allowed;
+    opacity: 0.9;
+}

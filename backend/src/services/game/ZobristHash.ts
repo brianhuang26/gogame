@@ -1,4 +1,4 @@
-import { BoardSize, BoardCell, Position, StoneColor } from '../../../shared/contracts/types';
+import { BoardSize, BoardCell, Position, StoneColor } from '../../../../shared/contracts/types';
 
 /**
  * Zobrist Hashing for efficient board state comparison
