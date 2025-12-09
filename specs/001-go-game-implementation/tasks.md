@@ -37,17 +37,17 @@ description: "Task list for Go Game implementation"
 
 **Purpose**: 建立專案結構與基礎設定
 
-- [ ] T001 Create project directory structure (backend/, frontend/, shared/)
-- [ ] T002 Initialize backend Node.js project with TypeScript 5.0+ and Express.js 4+ in backend/package.json
-- [ ] T003 Initialize frontend React 18+ project with Vite and TypeScript in frontend/package.json
-- [ ] T004 [P] Configure ESLint and Prettier for backend in backend/.eslintrc.js
-- [ ] T005 [P] Configure ESLint and Prettier for frontend in frontend/.eslintrc.js
-- [ ] T006 [P] Setup Jest 28+ testing framework for backend in backend/jest.config.js
-- [ ] T007 [P] Setup Jest testing framework for frontend in frontend/jest.config.js
-- [ ] T008 Setup MongoDB 6.0+ connection and database initialization in backend/src/db/connection.ts
-- [ ] T009 Create environment configuration templates in backend/.env.example and frontend/.env.example
-- [ ] T010 [P] Setup TypeScript configuration for backend in backend/tsconfig.json
-- [ ] T011 [P] Setup TypeScript configuration for frontend in frontend/tsconfig.json
+- [X] T001 Create project directory structure (backend/, frontend/, shared/)
+- [X] T002 Initialize backend Node.js project with TypeScript 5.0+ and Express.js 4+ in backend/package.json
+- [X] T003 Initialize frontend React 18+ project with Vite and TypeScript in frontend/package.json
+- [X] T004 [P] Configure ESLint and Prettier for backend in backend/.eslintrc.js
+- [X] T005 [P] Configure ESLint and Prettier for frontend in frontend/.eslintrc.js
+- [X] T006 [P] Setup Jest 28+ testing framework for backend in backend/jest.config.js
+- [X] T007 [P] Setup Jest testing framework for frontend in frontend/jest.config.js
+- [X] T008 Setup MongoDB 6.0+ connection and database initialization in backend/src/db/connection.ts
+- [X] T009 Create environment configuration templates in backend/.env.example and frontend/.env.example
+- [X] T010 [P] Setup TypeScript configuration for backend in backend/tsconfig.json
+- [X] T011 [P] Setup TypeScript configuration for frontend in frontend/tsconfig.json
 
 ---
 
@@ -57,19 +57,19 @@ description: "Task list for Go Game implementation"
 
 **⚠️ CRITICAL**: 此階段完成前無法開始任何使用者故事開發
 
-- [ ] T012 Create shared TypeScript interfaces for Position, StoneColor, BoardCell in shared/contracts/types.ts
-- [ ] T013 [P] Implement Zobrist hashing algorithm in backend/src/services/game/ZobristHash.ts
-- [ ] T014 [P] Implement SuperKo checker using Set-based history tracking in backend/src/services/game/SuperKoChecker.ts
-- [ ] T015 [P] Implement BoardAnalyzer for group detection using BFS in backend/src/services/game/BoardAnalyzer.ts
-- [ ] T016 Setup Express.js server with middleware structure in backend/src/app.ts
-- [ ] T017 Setup Socket.IO server integration with Express in backend/src/websocket/SocketManager.ts
-- [ ] T018 [P] Implement JWT authentication middleware in backend/src/api/middleware/auth.ts
-- [ ] T019 [P] Implement error handling middleware in backend/src/api/middleware/errorHandler.ts
-- [ ] T020 [P] Implement rate limiting middleware in backend/src/api/middleware/rateLimit.ts
-- [ ] T021 Create logger utility using Winston in backend/src/utils/logger.ts
-- [ ] T022 Create validation utility for game inputs in backend/src/utils/validation.ts
-- [ ] T023 Setup Socket.IO client configuration in frontend/src/services/socket.ts
-- [ ] T024 Create API client service using Axios in frontend/src/services/api.ts
+- [X] T012 Create shared TypeScript interfaces for Position, StoneColor, BoardCell in shared/contracts/types.ts
+- [X] T013 [P] Implement Zobrist hashing algorithm in backend/src/services/game/ZobristHash.ts
+- [X] T014 [P] Implement SuperKo checker using Set-based history tracking in backend/src/services/game/SuperKoChecker.ts
+- [X] T015 [P] Implement BoardAnalyzer for group detection using BFS in backend/src/services/game/BoardAnalyzer.ts
+- [X] T016 Setup Express.js server with middleware structure in backend/src/app.ts
+- [X] T017 Setup Socket.IO server integration with Express in backend/src/websocket/SocketManager.ts
+- [X] T018 [P] Implement JWT authentication middleware in backend/src/api/middleware/auth.ts
+- [X] T019 [P] Implement error handling middleware in backend/src/api/middleware/errorHandler.ts
+- [X] T020 [P] Implement rate limiting middleware in backend/src/api/middleware/rateLimit.ts
+- [X] T021 Create logger utility using Winston in backend/src/utils/logger.ts
+- [X] T022 Create validation utility for game inputs in backend/src/utils/validation.ts
+- [X] T023 Setup Socket.IO client configuration in frontend/src/services/socket.ts
+- [X] T024 Create API client service using Axios in frontend/src/services/api.ts
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -94,28 +94,28 @@ description: "Task list for Go Game implementation"
 
 ### Implementation for User Story 1
 
-- [ ] T031 [P] [US1] Create Game model interface in backend/src/models/Game.ts
-- [ ] T032 [P] [US1] Create GameState model interface in backend/src/models/GameState.ts
-- [ ] T033 [P] [US1] Create Move model interface in backend/src/models/Move.ts
-- [ ] T034 [P] [US1] Create Player model interface in backend/src/models/Player.ts
-- [ ] T035 [US1] Implement GameRepository for MongoDB operations in backend/src/db/repositories/GameRepository.ts
-- [ ] T036 [US1] Implement GameEngine core logic (depends on T031-T034) in backend/src/services/game/GameEngine.ts
-- [ ] T037 [US1] Implement stone placement validation in backend/src/services/game/GameEngine.ts
-- [ ] T038 [US1] Implement capture detection using BoardAnalyzer in backend/src/services/game/GameEngine.ts
-- [ ] T039 [US1] Implement forbidden point (suicide) detection in backend/src/services/game/GameEngine.ts
+- [X] T031 [P] [US1] Create Game model interface in backend/src/models/Game.ts
+- [X] T032 [P] [US1] Create GameState model interface in backend/src/models/GameState.ts
+- [X] T033 [P] [US1] Create Move model interface in backend/src/models/Move.ts
+- [X] T034 [P] [US1] Create Player model interface in backend/src/models/Player.ts
+- [X] T035 [US1] Implement GameRepository for MongoDB operations in backend/src/db/repositories/GameRepository.ts
+- [X] T036 [US1] Implement GameEngine core logic (depends on T031-T034) in backend/src/services/game/GameEngine.ts
+- [X] T037 [US1] Implement stone placement validation in backend/src/services/game/GameEngine.ts
+- [X] T038 [US1] Implement capture detection using BoardAnalyzer in backend/src/services/game/GameEngine.ts
+- [X] T039 [US1] Implement forbidden point (suicide) detection in backend/src/services/game/GameEngine.ts
 - [ ] T040 [US1] Implement territory counting using Chinese rules in backend/src/services/game/ScoringService.ts
-- [ ] T041 [US1] Create POST /api/v1/games endpoint in backend/src/api/routes/games.ts
-- [ ] T042 [US1] Create GET /api/v1/games/:id endpoint in backend/src/api/routes/games.ts
-- [ ] T043 [US1] Create POST /api/v1/games/:id/moves endpoint in backend/src/api/routes/games.ts
-- [ ] T044 [US1] Create POST /api/v1/games/:id/end endpoint for game termination in backend/src/api/routes/games.ts
-- [ ] T045 [P] [US1] Create Board component with Canvas rendering in frontend/src/components/Board/Board.tsx
-- [ ] T046 [P] [US1] Implement board rendering logic using Canvas API in frontend/src/utils/boardRenderer.ts
-- [ ] T047 [P] [US1] Create GameInfo component showing current state in frontend/src/components/GameInfo/GameInfo.tsx
+- [X] T041 [US1] Create POST /api/v1/games endpoint in backend/src/api/routes/games.ts
+- [X] T042 [US1] Create GET /api/v1/games/:id endpoint in backend/src/api/routes/games.ts
+- [X] T043 [US1] Create POST /api/v1/games/:id/moves endpoint in backend/src/api/routes/games.ts
+- [X] T044 [US1] Create POST /api/v1/games/:id/end endpoint for game termination in backend/src/api/routes/games.ts
+- [X] T045 [P] [US1] Create Board component with Canvas rendering in frontend/src/components/Board/Board.tsx
+- [X] T046 [P] [US1] Implement board rendering logic using Canvas API in frontend/src/utils/boardRenderer.ts
+- [X] T047 [P] [US1] Create GameInfo component showing current state in frontend/src/components/GameInfo/GameInfo.tsx
 - [ ] T048 [P] [US1] Create CapturedStones display component in frontend/src/components/GameInfo/CapturedStones.tsx
-- [ ] T049 [US1] Create GamePage integrating all components in frontend/src/pages/GamePage.tsx
+- [X] T049 [US1] Create GamePage integrating all components in frontend/src/pages/GamePage.tsx
 - [ ] T050 [US1] Implement useGame custom hook for game state management in frontend/src/hooks/useGame.ts
 - [ ] T051 [US1] Add error message display with Traditional Chinese messages in frontend/src/components/ErrorDisplay/ErrorDisplay.tsx
-- [ ] T052 [US1] Add validation for all user story 1 operations ensuring <100ms stone placement calculation
+- [X] T052 [US1] Add validation for all user story 1 operations ensuring <100ms stone placement calculation
 
 **Checkpoint**: At this point, User Story 1 should be fully functional - two players can play a complete game locally with correct capture and scoring
 
@@ -137,12 +137,12 @@ description: "Task list for Go Game implementation"
 
 ### Implementation for User Story 2
 
-- [ ] T058 [US2] Integrate SuperKoChecker into GameEngine stone placement flow in backend/src/services/game/GameEngine.ts
-- [ ] T059 [US2] Implement board hash calculation on every move in backend/src/services/game/GameEngine.ts
-- [ ] T060 [US2] Store board history in GameState with hash values in backend/src/models/GameState.ts
-- [ ] T061 [US2] Add superko validation before allowing stone placement in backend/src/services/game/GameEngine.ts
-- [ ] T062 [US2] Update GameRepository to store boardHistory array in backend/src/db/repositories/GameRepository.ts
-- [ ] T063 [US2] Add Traditional Chinese error messages for ko violations in backend/src/utils/validation.ts
+- [X] T058 [US2] Integrate SuperKoChecker into GameEngine stone placement flow in backend/src/services/game/GameEngine.ts
+- [X] T059 [US2] Implement board hash calculation on every move in backend/src/services/game/GameEngine.ts
+- [X] T060 [US2] Store board history in GameState with hash values in backend/src/models/GameState.ts
+- [X] T061 [US2] Add superko validation before allowing stone placement in backend/src/services/game/GameEngine.ts
+- [X] T062 [US2] Update GameRepository to store boardHistory array in backend/src/db/repositories/GameRepository.ts
+- [X] T063 [US2] Add Traditional Chinese error messages for ko violations in backend/src/utils/validation.ts
 - [ ] T064 [US2] Display ko violation messages in frontend UI in frontend/src/components/ErrorDisplay/ErrorDisplay.tsx
 - [ ] T065 [US2] Add visual indicator for ko point on board in frontend/src/components/Board/Board.tsx
 
@@ -166,17 +166,17 @@ description: "Task list for Go Game implementation"
 ### Implementation for User Story 3
 
 - [ ] T070 [P] [US3] Define WebSocket event contracts in shared/contracts/websocket-events.ts
-- [ ] T071 [US3] Implement WebSocket 'game:join' handler in backend/src/websocket/handlers/gameHandlers.ts
-- [ ] T072 [US3] Implement WebSocket 'game:move' handler broadcasting to room in backend/src/websocket/handlers/gameHandlers.ts
-- [ ] T073 [US3] Implement WebSocket 'game:resign' handler in backend/src/websocket/handlers/gameHandlers.ts
-- [ ] T074 [US3] Implement socket authentication middleware in backend/src/websocket/middleware/socketAuth.ts
-- [ ] T075 [US3] Implement room management for games in backend/src/websocket/SocketManager.ts
+- [X] T071 [US3] Implement WebSocket 'game:join' handler in backend/src/websocket/handlers/gameHandlers.ts
+- [X] T072 [US3] Implement WebSocket 'game:move' handler broadcasting to room in backend/src/websocket/handlers/gameHandlers.ts
+- [X] T073 [US3] Implement WebSocket 'game:resign' handler in backend/src/websocket/handlers/gameHandlers.ts
+- [X] T074 [US3] Implement socket authentication middleware in backend/src/websocket/middleware/socketAuth.ts
+- [X] T075 [US3] Implement room management for games in backend/src/websocket/SocketManager.ts
 - [ ] T076 [US3] Add session persistence for disconnected users (10 min retention) in backend/src/services/SessionService.ts
 - [ ] T077 [US3] Implement reconnection logic with state recovery in backend/src/websocket/handlers/reconnectionHandlers.ts
-- [ ] T078 [US3] Setup Socket.IO client in frontend with auto-reconnect in frontend/src/services/socket.ts
+- [X] T078 [US3] Setup Socket.IO client in frontend with auto-reconnect in frontend/src/services/socket.ts
 - [ ] T079 [US3] Implement useSocket custom hook in frontend/src/hooks/useSocket.ts
-- [ ] T080 [US3] Connect Board component to WebSocket events in frontend/src/components/Board/Board.tsx
-- [ ] T081 [US3] Add real-time move updates to GamePage in frontend/src/pages/GamePage.tsx
+- [X] T080 [US3] Connect Board component to WebSocket events in frontend/src/components/Board/Board.tsx
+- [X] T081 [US3] Add real-time move updates to GamePage in frontend/src/pages/GamePage.tsx
 - [ ] T082 [US3] Implement optimistic UI updates with rollback on error in frontend/src/hooks/useGame.ts
 - [ ] T083 [US3] Add network status indicator in frontend/src/components/NetworkStatus/NetworkStatus.tsx
 
