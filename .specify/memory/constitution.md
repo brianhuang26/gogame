@@ -2,32 +2,33 @@
 ================================================================================
 SYNC IMPACT REPORT
 ================================================================================
-Version Change: 1.0.0 → 1.1.0
+Version Change: 1.1.0 → 1.2.0
 Date: 2025-12-09
 
-MINOR version bump rationale: Added new language/localization principles and
-JavaScript ES6+ specific technical standards. Expanded existing principles to
-include Traditional Chinese documentation requirements and modern JavaScript
-best practices.
+MINOR version bump rationale: Enhanced Language & Documentation Standards
+(Principle V) to explicitly mandate Traditional Chinese (zh-TW) for
+requirements.md and spec.md files. Added explicit file-level requirements to
+eliminate ambiguity in documentation language standards.
 
 Modified Principles:
-  1. Code Quality Standards → Enhanced with JavaScript ES6+ requirements
-  2. User Experience Consistency → Enhanced with Traditional Chinese UI text requirements
-
-Added Principles:
-  5. Language & Documentation Standards (new) - Traditional Chinese requirements
-  6. JavaScript ES6+ Technical Standards (new)
+  5. Language & Documentation Standards → Enhanced with explicit requirements.md
+     and spec.md language mandate (Traditional Chinese zh-TW only)
 
 Added Sections:
-  - Language requirements for all project artifacts
+  - Explicit file-level language requirements for requirements.md and spec.md
+  - Clarification that these core specification files MUST use Traditional Chinese
+  - Added requirement that all files under `.specify/specs/` must use Traditional Chinese
 
 Templates Status:
-  ✅ plan-template.md - Constitution Check section references constitution
-  ✅ spec-template.md - Requirements section aligns with quality principles
-  ✅ tasks-template.md - Test-first approach and task categorization align
+  ✅ plan-template.md - Added language requirement notice at top
+  ✅ spec-template.md - Added language requirement notice at top
+  ✅ tasks-template.md - Added language requirement notice at top
+  ✅ checklist-template.md - Added language requirement notice at top
+  ✅ agent-file-template.md - Added language requirement notice at top
 
 Follow-up Actions:
-  - None required; all templates compatible with updated constitution
+  - None required; all templates updated with language requirement notices
+  - All templates now prominently display Traditional Chinese requirement
 ================================================================================
 -->
 
@@ -100,16 +101,19 @@ Follow-up Actions:
 
 **專案必須遵守以下語言使用規範：**
 
-- 所有專案文件（README、規格、計畫）必須使用正體中文撰寫
+- 所有專案文件（README、規格、計畫）必須使用正體中文（zh-TW）撰寫
+- **requirements.md 和 spec.md 必須使用正體中文（zh-TW）編寫** — 這是不可妥協的要求
 - 程式碼中的變數、函數、類別命名必須使用英文
 - 所有程式碼註解必須使用正體中文
 - 錯誤訊息和使用者介面文字必須使用正體中文
 - API 文件和技術規格必須使用正體中文說明
 - Git commit 訊息可使用正體中文或英文，但需保持一致性
 - 程式碼內的常數字串（如設定鍵、日誌訊息）優先使用英文，使用者可見字串使用正體中文
+- 所有 `.specify/specs/` 目錄下的文件必須使用正體中文
 
 **理由**：統一的語言標準確保團隊協作效率，正體中文文件降低本地團隊溝通成本，
-英文命名符合國際程式設計慣例並確保程式碼可維護性。
+英文命名符合國際程式設計慣例並確保程式碼可維護性。明確要求 requirements.md 和
+spec.md 使用正體中文可消除歧義，確保核心規格文件的一致性和可讀性。
 
 ### VI. JavaScript ES6+ 技術標準
 
@@ -202,4 +206,4 @@ Follow-up Actions:
 - 技術決策必須參照相關憲章原則
 - JavaScript ES6+ 最佳實踐必須在審查中驗證
 
-**版本**：1.1.0 | **批准日期**：2025-12-09 | **最後修訂**：2025-12-09
+**版本**：1.2.0 | **批准日期**：2025-12-09 | **最後修訂**：2025-12-09

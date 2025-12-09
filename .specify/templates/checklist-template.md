@@ -1,5 +1,14 @@
 # [CHECKLIST TYPE] Checklist: [FEATURE NAME]
 
+<!--
+  ⚠️ 重要：本文件必須使用正體中文（zh-TW）編寫
+  IMPORTANT: This document MUST be written in Traditional Chinese (zh-TW)
+  
+  根據專案憲章第 V 條「語言與文件標準」，所有專案文件必須使用正體中文撰寫。
+  Per Constitution Principle V "Language & Documentation Standards", all project 
+  documentation MUST be written in Traditional Chinese.
+-->
+
 **Purpose**: [Brief description of what this checklist covers]
 **Created**: [DATE]
 **Feature**: [Link to spec.md or relevant documentation]
