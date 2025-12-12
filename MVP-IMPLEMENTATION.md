@@ -85,9 +85,9 @@
 
 #### 待完成 (18%)
 - [ ] ScoringService（終局計點）
-- [ ] CapturedStones 獨立元件
-- [ ] useGame 自訂 Hook
-- [ ] ErrorDisplay 元件
+- [x] CapturedStones 獨立元件（整合於 GameInfo）
+- [x] useGame 自訂 Hook
+- [x] ErrorDisplay 元件
 
 ### ✅ Phase 4: User Story 2 - 打劫規則 (6/8 tasks, 75%)
 - [X] SuperKo 整合至 GameEngine
@@ -115,7 +115,7 @@
 - [X] 自動重連設定
 - [X] Board 元件連接 WebSocket
 - [X] GamePage 即時更新
-- [ ] useSocket Hook
+- [x] useSocket Hook
 - [ ] 樂觀 UI 更新
 - [ ] 網路狀態指示器
 
@@ -242,8 +242,11 @@ npm test
 GET    /health                      健康檢查
 POST   /api/v1/games                建立對局
 GET    /api/v1/games/:id            取得對局
-POST   /api/v1/games/:id/moves      落子（備用）
+POST   /api/v1/games/:id/moves      落子
 POST   /api/v1/games/:id/end        結束對局
+POST   /api/v1/auth/register        註冊
+POST   /api/v1/auth/login           登入
+GET    /api/v1/auth/me              取得個人資料
 ```
 
 ### WebSocket 事件
@@ -291,9 +294,9 @@ Server → Client:
 
 ## 已知問題
 
-1. **uuid 套件未安裝**: 執行 `npm install uuid` 解決
+1. **uuid 套件未安裝**: 已解決
 2. **測試尚未撰寫**: Phase 3-5 的單元/整合測試待補
-3. **認證系統簡化**: JWT 實作存在但缺少註冊/登入端點
+3. **認證系統**: 已實作完整 JWT 註冊/登入流程
 4. **終局處理**: 僅支援投降，尚未實作雙方 pass 與計點
 
 ## 貢獻者
