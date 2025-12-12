@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { BoardCell, Position } from '../../../../../shared/contracts/types';
+import { BoardCell, Position } from '../../../../shared/contracts/types';
 import './Board.css';
 
 interface BoardProps {
@@ -27,7 +27,7 @@ export const Board: React.FC<BoardProps> = ({
   // Constants for rendering
   const cellSize = 30;
   const margin = 30; // Margin for coordinates
-  const padding = 20; // Padding inside the board grid
+
   const canvasSize = boardSize * cellSize + margin * 2;
 
   useEffect(() => {

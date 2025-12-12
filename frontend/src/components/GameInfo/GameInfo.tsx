@@ -1,5 +1,5 @@
 import React from 'react';
-import { GameState } from '../../../../../shared/contracts/types';
+import { GameState } from '../../../../shared/contracts/types';
 import { CapturedStones } from './CapturedStones';
 import './GameInfo.css';
 

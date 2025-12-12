@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { socket } from '../services/socket';
-import { GameState, Move, GameResult } from '../../../../shared/contracts/types';
+import { GameState, Move, GameResult } from '../../../shared/contracts/types';
 
 interface UseSocketReturn {
     isConnected: boolean;

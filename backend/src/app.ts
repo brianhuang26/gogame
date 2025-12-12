@@ -63,7 +63,12 @@ class App {
 
     // API routes
     const gamesRouter = require('./api/routes/games').default;
+    const authRouter = require('./api/routes/auth').default;
+    const playersRouter = require('./api/routes/players').default;
+
     this.app.use('/api/v1/games', gamesRouter);
+    this.app.use('/api/v1/auth', authRouter);
+    this.app.use('/api/v1/players', playersRouter);
   }
 
   private initializeErrorHandling(): void {

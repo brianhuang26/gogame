@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import { api } from '../services/api';
 import { useSocket } from './useSocket';
 
@@ -17,16 +17,27 @@ export const useGame = (gameId: string) => {
         gameResult
     } = useSocket(gameId);
 
+    const [notFound, setNotFound] = useState(false);
+
+
+
     useEffect(() => {
         const loadGame = async () => {
+            setNotFound(false);
             try {
                 const response = await api.getGame(gameId);
                 if (response.success) {
-                    // Socket will handle state updates after join
                     joinGame(gameId);
                 }
             } catch (err: any) {
                 console.error('Failed to load game:', err);
+                if (err.error?.code === 'GAME_NOT_FOUND' || err.code === 'GAME_NOT_FOUND') {
+                    setNotFound(true);
+                } else {
+                    if (err.error?.code === 'GAME_NOT_FOUND') {
+                        setNotFound(true);
+                    }
+                }
             }
         };
 
@@ -58,6 +69,7 @@ export const useGame = (gameId: string) => {
         error,
         isConnected,
         gameResult,
+        notFound,
         handleStonePlace,
         handlePass,
         handleResign,

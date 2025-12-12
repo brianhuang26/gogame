@@ -17,11 +17,29 @@ export const GamePage: React.FC<{ gameId: string }> = ({ gameId }) => {
     error,
     isConnected,
     gameResult,
+    notFound,
     handleStonePlace,
     handlePass,
     handleResign,
     clearError
   } = useGame(gameId);
+
+  if (notFound) {
+    return (
+      <div className="game-container" style={{ justifyContent: 'center', height: '100vh', alignItems: 'center' }}>
+        <div style={{ textAlign: 'center', padding: '40px', background: 'white', borderRadius: '8px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
+          <h2>找不到此對局</h2>
+          <p>對局 ID: {gameId} 不存在。</p>
+          <button
+            onClick={() => window.location.href = '/'}
+            style={{ marginTop: '20px', padding: '10px 20px', background: '#2196f3', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+          >
+            回首頁
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (!gameState || !players) {
     return <div className="game-page">載入中...</div>;
