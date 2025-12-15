@@ -103,7 +103,7 @@ description: "Task list for Go Game implementation"
 - [X] T037 [US1] Implement stone placement validation in backend/src/services/game/GameEngine.ts
 - [X] T038 [US1] Implement capture detection using BoardAnalyzer in backend/src/services/game/GameEngine.ts
 - [X] T039 [US1] Implement forbidden point (suicide) detection in backend/src/services/game/GameEngine.ts
-- [ ] T040 [US1] Implement territory counting using Chinese rules in backend/src/services/game/ScoringService.ts
+- [X] T040 [US1] Implement territory counting using Chinese rules in backend/src/services/game/ScoringService.ts
 - [X] T041 [US1] Create POST /api/v1/games endpoint in backend/src/api/routes/games.ts
 - [X] T042 [US1] Create GET /api/v1/games/:id endpoint in backend/src/api/routes/games.ts
 - [X] T043 [US1] Create POST /api/v1/games/:id/moves endpoint in backend/src/api/routes/games.ts
@@ -111,10 +111,10 @@ description: "Task list for Go Game implementation"
 - [X] T045 [P] [US1] Create Board component with Canvas rendering in frontend/src/components/Board/Board.tsx
 - [X] T046 [P] [US1] Implement board rendering logic using Canvas API in frontend/src/utils/boardRenderer.ts
 - [X] T047 [P] [US1] Create GameInfo component showing current state in frontend/src/components/GameInfo/GameInfo.tsx
-- [ ] T048 [P] [US1] Create CapturedStones display component in frontend/src/components/GameInfo/CapturedStones.tsx
+- [X] T048 [P] [US1] Create CapturedStones display component in frontend/src/components/GameInfo/CapturedStones.tsx
 - [X] T049 [US1] Create GamePage integrating all components in frontend/src/pages/GamePage.tsx
-- [ ] T050 [US1] Implement useGame custom hook for game state management in frontend/src/hooks/useGame.ts
-- [ ] T051 [US1] Add error message display with Traditional Chinese messages in frontend/src/components/ErrorDisplay/ErrorDisplay.tsx
+- [X] T050 [US1] Implement useGame custom hook for game state management in frontend/src/hooks/useGame.ts
+- [X] T051 [US1] Add error message display with Traditional Chinese messages in frontend/src/components/common/ErrorDisplay.tsx
 - [X] T052 [US1] Add validation for all user story 1 operations ensuring <100ms stone placement calculation
 
 **Checkpoint**: At this point, User Story 1 should be fully functional - two players can play a complete game locally with correct capture and scoring
@@ -165,7 +165,7 @@ description: "Task list for Go Game implementation"
 
 ### Implementation for User Story 3
 
-- [ ] T070 [P] [US3] Define WebSocket event contracts in shared/contracts/websocket-events.ts
+- [X] T070 [P] [US3] Define WebSocket event contracts in shared/contracts/types.ts
 - [X] T071 [US3] Implement WebSocket 'game:join' handler in backend/src/websocket/handlers/gameHandlers.ts
 - [X] T072 [US3] Implement WebSocket 'game:move' handler broadcasting to room in backend/src/websocket/handlers/gameHandlers.ts
 - [X] T073 [US3] Implement WebSocket 'game:resign' handler in backend/src/websocket/handlers/gameHandlers.ts
@@ -174,7 +174,7 @@ description: "Task list for Go Game implementation"
 - [ ] T076 [US3] Add session persistence for disconnected users (10 min retention) in backend/src/services/SessionService.ts
 - [ ] T077 [US3] Implement reconnection logic with state recovery in backend/src/websocket/handlers/reconnectionHandlers.ts
 - [X] T078 [US3] Setup Socket.IO client in frontend with auto-reconnect in frontend/src/services/socket.ts
-- [ ] T079 [US3] Implement useSocket custom hook in frontend/src/hooks/useSocket.ts
+- [X] T079 [US3] Implement useSocket custom hook in frontend/src/hooks/useSocket.ts
 - [X] T080 [US3] Connect Board component to WebSocket events in frontend/src/components/Board/Board.tsx
 - [X] T081 [US3] Add real-time move updates to GamePage in frontend/src/pages/GamePage.tsx
 - [ ] T082 [US3] Implement optimistic UI updates with rollback on error in frontend/src/hooks/useGame.ts
