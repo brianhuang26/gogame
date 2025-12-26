@@ -30,11 +30,11 @@ function AppContent() {
 
   // Route matching
   if (currentPath === '/login') {
-    return <LoginPage />;
+    return <LoginPage onNavigate={navigate} />;
   }
 
   if (currentPath === '/register') {
-    return <RegisterPage />;
+    return <RegisterPage onNavigate={navigate} />;
   }
 
   // Game route: /game/:id or just /:id

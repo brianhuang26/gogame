@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
 import './Auth.css';
 
-export const LoginPage: React.FC = () => {
+export const LoginPage: React.FC<{ onNavigate: (path: string) => void }> = ({ onNavigate }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -17,11 +17,14 @@ export const LoginPage: React.FC = () => {
             const response = await api.login({ email, password });
             if (response.success) {
                 login(response.data.token, response.data.player);
+                onNavigate('/');
             } else {
                 setError(response.error?.message || '登入失敗');
             }
         } catch (err: any) {
-            setError(err.message || '發生錯誤');
+            // Handle both Error objects and API response objects
+            const message = err.error?.message || err.message || '發生錯誤';
+            setError(message);
         }
     };
 
@@ -51,7 +54,12 @@ export const LoginPage: React.FC = () => {
                 <button type="submit">登入</button>
             </form>
             <p>
-                還沒有帳號？ <a href="/register">註冊</a>
+                還沒有帳號？ <span
+                    style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer' }}
+                    onClick={() => onNavigate('/register')}
+                >
+                    註冊
+                </span>
             </p>
         </div>
     );
