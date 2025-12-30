@@ -4,6 +4,7 @@ import { logger } from '../utils/logger';
 import { GameEngine } from '../services/game/GameEngine';
 import { GameRepository } from '../db/repositories/GameRepository';
 import { Position, StoneColor } from '../../../shared/contracts/types';
+import { QueueService } from '../services/matchmaking/QueueService';
 
 /**
  * Socket.IO Manager
@@ -12,10 +13,12 @@ import { Position, StoneColor } from '../../../shared/contracts/types';
 export class SocketManager {
   private io: SocketIOServer;
   private gameRepository: GameRepository;
+  private queueService: QueueService;
 
   constructor(io: SocketIOServer) {
     this.io = io;
     this.gameRepository = new GameRepository();
+    this.queueService = new QueueService();
     this.initialize();
   }
 
@@ -28,11 +31,12 @@ export class SocketManager {
         if (!token) {
           // In development, allow connection with mock user
           if (process.env.NODE_ENV === 'development') {
+            const randomId = Math.floor(Math.random() * 10000).toString();
             socket.data.user = {
-              playerId: 'dev-player-1',
-              username: 'DevPlayer'
+              playerId: `dev-player-${randomId}`,
+              username: `DevPlayer${randomId}`
             };
-            logger.debug('Socket connected with mock user in development mode');
+            logger.debug(`Socket connected with mock user in development mode: ${socket.data.user.username}`);
             return next();
           }
           return next(new Error('未提供認證令牌'));
@@ -49,11 +53,12 @@ export class SocketManager {
       } catch (error) {
         // In development, fall back to mock user
         if (process.env.NODE_ENV === 'development') {
+          const randomId = Math.floor(Math.random() * 10000).toString();
           socket.data.user = {
-            playerId: 'dev-player-1',
-            username: 'DevPlayer'
+            playerId: `dev-player-${randomId}`,
+            username: `DevPlayer${randomId}`
           };
-          logger.debug('Socket JWT verification failed, using mock user in development mode');
+          logger.debug(`Socket JWT verification failed, using mock user in development mode: ${socket.data.user.username}`);
           return next();
         }
         next(new Error('無效的認證令牌'));
@@ -66,6 +71,7 @@ export class SocketManager {
       this.setupGameHandlers(socket);
 
       socket.on('disconnect', () => {
+        this.queueService.removeFromQueue(socket.id);
         logger.info(`Socket 斷線: ${socket.id}`);
       });
     });
@@ -254,6 +260,52 @@ export class SocketManager {
           message: '投降失敗'
         });
       }
+    });
+
+    /**
+     * 配對相關事件
+     */
+    socket.on('matchmaking:join', async () => {
+      try {
+        const user = socket.data.user;
+        this.queueService.addToQueue({
+          socketId: socket.id,
+          playerId: user.playerId,
+          username: user.username
+        });
+
+        // 嘗試配對
+        const match = this.queueService.findMatch();
+        if (match) {
+          // 建立對局 (預設 19路)
+          const game = await this.gameRepository.create({
+            boardSize: 19,
+            blackPlayerId: match.black.playerId,
+            blackPlayerName: match.black.username,
+            blackPlayerRating: 1200, // 暫時預設
+            whitePlayerId: match.white.playerId,
+            whitePlayerName: match.white.username,
+            whitePlayerRating: 1200
+          });
+
+          // 通知雙方
+          [match.black.socketId, match.white.socketId].forEach(socketId => {
+            this.io.to(socketId).emit('matchmaking:found', {
+              gameId: game.gameId
+            });
+          });
+
+          logger.info(`配對成功: ${game.gameId} (${match.black.username} vs ${match.white.username})`);
+        }
+      } catch (error) {
+        logger.error('配對請求失敗', error);
+        socket.emit('matchmaking:error', { message: '配對請求失敗，請稍後再試' });
+      }
+    });
+
+    socket.on('matchmaking:cancel', () => {
+      this.queueService.removeFromQueue(socket.id);
+      logger.info(`取消配對: ${socket.data.user?.username}`);
     });
   }
 }

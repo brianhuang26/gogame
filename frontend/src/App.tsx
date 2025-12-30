@@ -4,6 +4,7 @@ import { GamePage } from './pages/GamePage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { api } from './services/api';
+import { useMatchmaking } from './hooks/useMatchmaking';
 
 function AppContent() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
@@ -98,6 +99,7 @@ function AppContent() {
         )}
 
         <GameInput onJoin={(id) => navigate(`/${id}`)} />
+        <MatchmakingSection onJoin={(id) => navigate(`/${id}`)} />
 
         <div style={{
           marginTop: '30px',
@@ -192,6 +194,60 @@ function GameInput({ onJoin }: { onJoin: (id: string) => void }) {
           {isCreating ? '建立中...' : '建立新對局'}
         </button>
       </div>
+    </div>
+  );
+}
+
+function MatchmakingSection({ onJoin }: { onJoin: (id: string) => void }) {
+  const { isSearching, findMatch, cancelMatch } = useMatchmaking(onJoin);
+
+  return (
+    <div style={{ marginTop: '30px', textAlign: 'center', borderTop: '1px solid #eee', paddingTop: '20px' }}>
+      <h3 style={{ margin: '0 0 15px 0', color: '#555' }}>或是...</h3>
+      {!isSearching ? (
+        <button
+          onClick={findMatch}
+          style={{
+            padding: '12px 40px',
+            fontSize: '18px',
+            fontWeight: 'bold',
+            backgroundColor: '#9c27b0', // Purple
+            color: 'white',
+            border: 'none',
+            borderRadius: '30px',
+            cursor: 'pointer',
+            boxShadow: '0 4px 6px rgba(156, 39, 176, 0.3)',
+            transition: 'transform 0.1s',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto',
+            gap: '8px'
+          }}
+        >
+          <span>🔍</span> 自動配對對戰
+        </button>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div style={{ marginBottom: '15px', color: '#9c27b0', fontWeight: 'bold', fontSize: '18px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span className="loading-spinner">⏳</span> 正在尋找對手...
+          </div>
+          <button
+            onClick={cancelMatch}
+            style={{
+              padding: '8px 20px',
+              fontSize: '14px',
+              backgroundColor: '#f5f5f5',
+              color: '#666',
+              border: '1px solid #ddd',
+              borderRadius: '20px',
+              cursor: 'pointer'
+            }}
+          >
+            取消配對
+          </button>
+        </div>
+      )}
     </div>
   );
 }

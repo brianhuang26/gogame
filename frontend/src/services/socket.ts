@@ -53,6 +53,14 @@ class SocketService {
     this.socket?.emit('game:resign', { gameId });
   }
 
+  findMatch(): void {
+    this.socket?.emit('matchmaking:join', {});
+  }
+
+  cancelFindMatch(): void {
+    this.socket?.emit('matchmaking:cancel', {});
+  }
+
   on(event: string, callback: (data: any) => void): void {
     this.socket?.on(event, callback);
   }
