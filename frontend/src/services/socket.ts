@@ -8,6 +8,10 @@ class SocketService {
   private socket: Socket | null = null;
 
   connect(token?: string): void {
+    if (this.socket?.connected) {
+      this.socket.disconnect();
+    }
+
     const url = import.meta.env.VITE_SOCKET_URL || 'http://localhost:3000';
 
     this.socket = io(url, {

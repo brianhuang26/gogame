@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { api } from '../services/api';
+import { socket } from '../services/socket';
 
 interface User {
     playerId: string;
@@ -39,12 +40,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             const response = await api.getMe();
             if (response.success) {
                 setUser(response.data);
+                if (token) {
+                    socket.connect(token);
+                }
             } else {
                 localStorage.removeItem('token');
+                socket.disconnect();
             }
         } catch (error) {
             console.error('Auth check failed:', error);
             localStorage.removeItem('token');
+            socket.disconnect();
         } finally {
             console.log('Auth check finished, setting loading false');
             setIsLoading(false);
@@ -54,11 +60,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const login = (token: string, userData: User) => {
         localStorage.setItem('token', token);
         setUser(userData);
+        socket.connect(token);
     };
 
     const logout = () => {
         localStorage.removeItem('token');
         setUser(null);
+        socket.disconnect();
     };
 
     return (
