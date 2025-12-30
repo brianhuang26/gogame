@@ -6,6 +6,7 @@ interface BoardProps {
   board: BoardCell[][];
   boardSize: number;
   lastMove: Position | null;
+  nextStoneColor?: 'black' | 'white';
   onStonePlace: (position: Position) => void;
   disabled?: boolean;
 }
@@ -18,6 +19,7 @@ export const Board: React.FC<BoardProps> = ({
   board,
   boardSize,
   lastMove,
+  nextStoneColor = 'black',
   onStonePlace,
   disabled = false
 }) => {
@@ -93,7 +95,7 @@ export const Board: React.FC<BoardProps> = ({
 
     // Draw hover preview
     if (hoverPos && !disabled && board[hoverPos.y][hoverPos.x] === 0) {
-      drawStone(ctx, hoverPos.x, hoverPos.y, 'black', true);
+      drawStone(ctx, hoverPos.x, hoverPos.y, nextStoneColor, true);
     }
   };
 

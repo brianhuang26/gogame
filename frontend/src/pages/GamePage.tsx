@@ -77,6 +77,7 @@ export const GamePage: React.FC<{ gameId: string }> = ({ gameId }) => {
           board={gameState.currentBoard}
           boardSize={gameState.currentBoard.length}
           lastMove={gameState.lastMove}
+          nextStoneColor={gameState.currentTurn}
           onStonePlace={handleStonePlace}
           disabled={!isConnected || !!gameResult}
         />
